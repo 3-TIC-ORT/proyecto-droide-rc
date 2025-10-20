@@ -1,30 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Control MSE6</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Droide RC</title>
+  <link rel="stylesheet" href="script.css" />
 </head>
 <body>
-  <h1>Control MSE6</h1>
-  <div id="alerta" class="alerta"></div>
+  <!-- CINTA SUPERIOR -->
+  <header class="banner">
+    <div class="strip"></div>
+    <h1>Droide RC</h1>
+    <div class="strip small"></div>
+  </header>
 
-  <div class="panel">
-    <button id="btn-up" class="flecha">▲</button>
-    <div>
-      <button id="btn-left" class="flecha">◀</button>
-      <button id="btn-right" class="flecha">▶</button>
-    </div>
-    <button id="btn-down" class="flecha">▼</button>
-  </div>
+  <!-- PANEL PRINCIPAL -->
+  <main class="panel">
+    <!-- LADO IZQUIERDO: LED -->
+    <section class="side left">
+      <div class="emoji">💡</div>
+      <button id="btn-led" class="tag" disabled>L<span class="italic">EDs</span></button>
+    </section>
 
-  <div class="acciones">
-    <button id="btn-luces" class="accion">💡</button>
-    <button id="btn-bocina" class="accion">🔊</button>
-  </div>
+    <!-- CRUCETA + IMAGEN CENTRAL -->
+    <section class="pad">
+      <button class="arrow up"    data-action="F" disabled></button>
 
-  <button id="conectar">🔌 Conectar Arduino</button>
+      <div class="middle">
+        <button class="arrow left"  data-action="L" disabled></button>
+
+        <div class="center-img">
+          <img src="https://upload.wikimedia.org/wikipedia/en/d/d2/MSE-6_droid.png"
+               alt="Droide MSE-6" />
+        </div>
+
+        <button class="arrow right" data-action="R" disabled></button>
+      </div>
+
+      <button class="arrow down"  data-action="B" disabled></button>
+
+      <div class="bottom-row">
+        <button class="stop" data-action="S" disabled>Stop</button>
+        <button id="btn-connect" class="connect">Conectar Arduino</button>
+      </div>
+    </section>
+
+    <!-- LADO DERECHO: BOCINA -->
+    <section class="side right">
+      <div class="emoji">📢</div>
+      <button id="btn-bocina" class="tag" disabled><span class="italic">B</span>ocina</button>
+    </section>
+  </main>
+
+  <footer class="help">
+    <p><strong>Teclas:</strong> W=↑, A=←, S=↓, D=→, X=Stop, L=LED, B=Bocina</p>
+    <p id="estado">Estado: listo</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>

@@ -1,86 +1,63 @@
-let puerto = null;
-let escritor = null;
+// ===== UI: DOM + eventos + funciones =====
+const $estado = document.getElementById("estado");
+const $btnConnect = document.getElementById("btn-connect");
 
-const alerta = document.getElementById("alerta");
-const botones = {
-  w: document.getElementById("btn-up"),
-  a: document.getElementById("btn-left"),
-  s: document.getElementById("btn-down"),
-  d: document.getElementById("btn-right"),
-  o: document.getElementById("btn-luces"),
-  p: document.getElementById("btn-bocina")
+// Mapa de teclas válidas
+const keyMap = {
+  w: "F", a: "L", s: "B", d: "R",
+  x: "S", l: "LED", b: "HORN"
 };
 
-function mostrarAlerta(msg) {
-  alerta.innerText = msg;
-  alerta.style.display = "block";
-}
+// --- WEB SERIAL ---
+let port = null;
+let writer = null;
 
-function ocultarAlerta() {
-  alerta.style.display = "none";
-}
-
-async function enviarSerial(texto) {
-  if (escritor) {
-    const data = new TextEncoder().encode(texto + "\n");
-    await escritor.write(data);
+async function conectarArduino() {
+  if (!("serial" in navigator)) {
+    setEstado("Tu navegador no soporta Web Serial (usa Chrome/Edge, https o localhost)");
+    return;
   }
-}
-
-function activarBoton(tecla, mensaje, comando) {
-  const btn = botones[tecla];
-  if (!btn.classList.contains("active")) {
-    btn.classList.add("active");
-    mostrarAlerta(mensaje);
-    enviarSerial(comando);
-  }
-}
-
-function desactivarBoton(tecla) {
-  const btn = botones[tecla];
-  if (btn.classList.contains("active")) {
-    btn.classList.remove("active");
-    ocultarAlerta();
-    enviarSerial("x"); // detener
-  }
-}
-
-document.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "w":
-      activarBoton("w", "MSE6 adelante", "w");
-      break;
-    case "a":
-      activarBoton("a", "MSE6 izquierda", "a");
-      break;
-    case "s":
-      activarBoton("s", "MSE6 atrás", "s");
-      break;
-    case "d":
-      activarBoton("d", "MSE6 derecha", "d");
-      break;
-    case "o":
-      activarBoton("o", "MSE6 secuencia de luces activada", "l");
-      break;
-    case "p":
-      activarBoton("p", "MSE6 bocina activada", "b");
-      break;
-  }
-});
-
-document.addEventListener("keyup", (e) => {
-  if (["w", "a", "s", "d", "o", "p"].includes(e.key)) {
-    desactivarBoton(e.key);
-  }
-});
-
-document.getElementById("conectar").addEventListener("click", async () => {
   try {
-    puerto = await navigator.serial.requestPort();
-    await puerto.open({ baudRate: 9600 });
-    escritor = puerto.writable.getWriter();
-    alert("✅ Arduino conectado");
-  } catch (error) {
-    alert("❌ Error al conectar con Arduino");
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 9600 });
+    writer = port.writable.getWriter();
+    setEstado("Arduino conectado ✔");
+    $btnConnect.textContent = "Conectado";
+    $btnConnect.disabled = true;
+  } catch (e) {
+    setEstado("Conexión cancelada o falló");
+  }
+}
+
+async function enviarAccion(action) {
+  if (!action) return;
+  setEstado("Enviando: " + action);
+  const line = action + "\n";
+  const data = new TextEncoder().encode(line);
+  if (writer) {
+    try {
+      await writer.write(data);
+      setEstado("Enviado: " + action);
+    } catch {
+      setEstado("Error escribiendo al puerto");
+    }
+  } else {
+    console.log("[SIMULADO]", action);
+    setEstado("SIM: " + action);
+  }
+}
+
+function setEstado(t){ $estado.textContent = "Estado: " + t }
+
+// SOLO el botón conectar responde al mouse
+$btnConnect.addEventListener("click", conectarArduino);
+
+// Teclado para controlar todo
+document.addEventListener("keydown", e => {
+  const key = (e.key || "").toLowerCase();
+  const action = keyMap[key];
+  if (action) {
+    enviarAccion(action);
+    e.preventDefault();
   }
 });
