@@ -17,26 +17,25 @@
   <main class="panel">
     <section class="side left">
       <div class="emoji">💡</div>
-      <button id="btn-led" class="tag" disabled>LEDs</button>
+      <button class="tag" disabled>LEDs</button>
     </section>
 
     <section class="pad">
-      <button class="arrow up" data-action="F" disabled></button>
+      <button class="arrow up" disabled></button>
       <div class="middle">
-        <button class="arrow left" data-action="L" disabled></button>
+        <button class="arrow left" disabled></button>
         <div class="center-box"></div>
-        <button class="arrow right" data-action="R" disabled></button>
+        <button class="arrow right" disabled></button>
       </div>
-      <button class="arrow down" data-action="B" disabled></button>
+      <button class="arrow down" disabled></button>
       <div class="bottom-row">
-        <button class="stop" data-action="S" disabled>Stop</button>
-        <button id="btn-connect" class="connect">Conectar Arduino</button>
+        <button class="stop" disabled>Stop</button>
       </div>
     </section>
 
     <section class="side right">
       <div class="emoji">📢</div>
-      <button id="btn-bocina" class="tag" disabled>Bocina</button>
+      <button class="tag" disabled>Bocina</button>
     </section>
   </main>
 
@@ -44,6 +43,8 @@
     <p><b>Teclas:</b> W=↑, A=←, S=↓, D=→, X=Stop, L=LED, B=Bocina</p>
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/JZylber/SoqueTIC-Client@v1.4.2/soquetic-client.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
