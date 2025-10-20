@@ -4,57 +4,44 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Droide RC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="script.css" />
 </head>
 <body>
-  <!-- CINTA SUPERIOR -->
   <header class="banner">
     <div class="strip"></div>
     <h1>Droide RC</h1>
     <div class="strip small"></div>
   </header>
 
-  <!-- PANEL PRINCIPAL -->
   <main class="panel">
-    <!-- LADO IZQUIERDO: LED -->
     <section class="side left">
       <div class="emoji">💡</div>
-      <button id="btn-led" class="tag" disabled>L<span class="italic">EDs</span></button>
+      <button id="btn-led" class="tag" disabled>LEDs</button>
     </section>
 
-    <!-- CRUCETA + IMAGEN CENTRAL -->
     <section class="pad">
-      <button class="arrow up"    data-action="F" disabled></button>
-
+      <button class="arrow up" data-action="F" disabled></button>
       <div class="middle">
-        <button class="arrow left"  data-action="L" disabled></button>
-
-        <div class="center-img">
-          <img src="https://upload.wikimedia.org/wikipedia/en/d/d2/MSE-6_droid.png"
-               alt="Droide MSE-6" />
-        </div>
-
+        <button class="arrow left" data-action="L" disabled></button>
+        <div class="center-box"></div>
         <button class="arrow right" data-action="R" disabled></button>
       </div>
-
-      <button class="arrow down"  data-action="B" disabled></button>
-
+      <button class="arrow down" data-action="B" disabled></button>
       <div class="bottom-row">
         <button class="stop" data-action="S" disabled>Stop</button>
         <button id="btn-connect" class="connect">Conectar Arduino</button>
       </div>
     </section>
 
-    <!-- LADO DERECHO: BOCINA -->
     <section class="side right">
       <div class="emoji">📢</div>
-      <button id="btn-bocina" class="tag" disabled><span class="italic">B</span>ocina</button>
+      <button id="btn-bocina" class="tag" disabled>Bocina</button>
     </section>
   </main>
 
   <footer class="help">
-    <p><strong>Teclas:</strong> W=↑, A=←, S=↓, D=→, X=Stop, L=LED, B=Bocina</p>
-    <p id="estado">Estado: listo</p>
+    <p><b>Teclas:</b> W=↑, A=←, S=↓, D=→, X=Stop, L=LED, B=Bocina</p>
   </footer>
 
   <script src="script.js"></script>
