@@ -1,66 +1,57 @@
 import { subscribePOSTEvent, startServer } from "soquetic";
 import { SerialPort } from "serialport";
 import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const LAST = path.join(__dirname, "last_command.json");
-const LOG = path.join(__dirname, "history.log");
 
 let port = null;
 
-function openSerial() {
+function conectarPuerto() {
   if (port && port.isOpen) return;
+  const preferido = process.env.COM_PATH || null;
 
-  const prefer = process.env.COM_PATH || null;
-
-  function tryOpen(p) {
+  function abrir(p) {
     try {
       port = new SerialPort({ path: p, baudRate: 9600 });
-      port.on("open", () => console.log("Serial abierto:", p));
-      port.on("error", e => console.log("Error serial:", e.message));
-    } catch(e) { console.log("No se pudo abrir:", e.message); }
+      port.on("open", () => console.log("Puerto abierto:", p));
+      port.on("error", e => console.log("Error:", e.message));
+    } catch (e) {
+      console.log("No se pudo abrir el puerto:", e.message);
+    }
   }
 
-  if (prefer) { tryOpen(prefer); return; }
+  if (preferido) {
+    abrir(preferido);
+    return;
+  }
 
   SerialPort.list()
-    .then(list => {
-      let c = null;
-      for (let d of list) {
-        const s = ((d.manufacturer||"")+" "+(d.friendlyName||"")+" "+d.path).toLowerCase();
-        if (s.includes("arduino") || s.includes("usb") || ["2341","2a03","1a86"].includes((d.vendorId||"").toLowerCase())) { c = d; break; }
-      }
-      if (!c && list.length) c = list[0];
-      if (c) tryOpen(c.path); else console.log("No hay puertos");
+    .then(lista => {
+      let elegido = lista.find(d =>
+        /arduino|usb|wch/i.test((d.manufacturer || "") + d.path)
+      );
+      if (!elegido && lista.length) elegido = lista[0];
+      if (elegido) abrir(elegido.path);
+      else console.log("No se encontró Arduino.");
     })
-    .catch(err => console.log("List error:", err.message));
+    .catch(err => console.log("Error listando:", err.message));
 }
 
-openSerial();
-
-const OK = ["F","B","L","R","S","LED","HORN"];
+conectarPuerto();
 
 subscribePOSTEvent("command", data => {
-  let cmd = "";
-  if (data && (data.cmd || data.action)) cmd = String(data.cmd || data.action);
-  cmd = cmd.toUpperCase();
-  if (!OK.includes(cmd)) return { ok:false };
-
-  const payload = { command: cmd, at: Date.now() };
-  try {
-    fs.writeFileSync(LAST, JSON.stringify(payload,null,2));
-    fs.appendFileSync(LOG, new Date(payload.at).toISOString()+" "+cmd+"\n");
-  } catch {}
+  const cmd = (data.cmd || "").toUpperCase();
+  const validos = ["F", "B", "L", "R", "S", "LED", "HORN"];
+  if (!validos.includes(cmd)) return { ok: false };
 
   try {
-    if (port && port.isOpen) port.write(cmd+"\n"); else openSerial();
-  } catch(e) { console.log("write err:", e.message); }
+    fs.writeFileSync("last_command.json", JSON.stringify({ cmd }, null, 2));
+    fs.appendFileSync("history.log", cmd + "\n");
+    if (port && port.isOpen) port.write(cmd + "\n");
+    else conectarPuerto();
+  } catch (e) {
+    console.log("Error:", e.message);
+  }
 
-  return { ok:true, sent:cmd };
+  return { ok: true, sent: cmd };
 });
 
 startServer(3000, false);
