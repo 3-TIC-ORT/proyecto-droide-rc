@@ -127,6 +127,11 @@ html, body {
   transform: rotate(180deg);
 }
 
+.arrow.on {
+  background: #ff4949;
+  box-shadow: 0 0 14px #ff4949, 0 0 6px #ff4949 inset;
+}
+
 .stop {
   background: #0e0e0f;
   color: #fff;

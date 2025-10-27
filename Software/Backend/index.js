@@ -18,20 +18,17 @@ function abrirPuerto() {
     }
   }
 
-  if (prefer) {
-    abrir(prefer);
-    return;
-  }
+  if (prefer) { abrir(prefer); return; }
 
   SerialPort.list()
     .then(lista => {
-      let elegido = null;
+      let e = null;
       for (let d of lista) {
         const s = ((d.manufacturer||"") + " " + d.path).toLowerCase();
-        if (s.includes("arduino") || s.includes("usb")) { elegido = d; break; }
+        if (s.includes("arduino") || s.includes("usb")) { e = d; break; }
       }
-      if (!elegido && lista.length) elegido = lista[0];
-      if (elegido) abrir(elegido.path);
+      if (!e && lista.length) e = lista[0];
+      if (e) abrir(e.path);
       else console.log("No hay Arduino conectado");
     })
     .catch(err => console.log("List error:", err.message));
@@ -39,9 +36,7 @@ function abrirPuerto() {
 
 abrirPuerto();
 
-subscribeGETEvent("ping", () => {
-  return { ok:true };
-});
+subscribeGETEvent("ping", () => ({ ok:true }));
 
 const OK = ["F","B","L","R","S","LED","HORN"];
 
@@ -54,9 +49,7 @@ subscribePOSTEvent("command", data => {
   try {
     if (port && port.isOpen) port.write(cmd + "\n");
     else abrirPuerto();
-  } catch(e) {
-    console.log("write error:", e.message);
-  }
+  } catch(e) {}
 
   return { ok:true };
 });
