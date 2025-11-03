@@ -1,0 +1,159 @@
+#define pinPWMA 6
+#define pinAIN2 7
+#define pinAIN1 8
+#define pinBIN1 9
+#define pinBIN2 10
+#define pinPWMB 11
+#define pinSTBY 12
+
+#define waitTime 2000
+#define motorSpeed 200
+
+const int botPin4 = 36;
+const int botPin1 = 3;
+const int botPin2 = 2;
+const int botPin3 = 38;
+int bot4;
+int bot3;
+int bot1;
+int bot2;
+const int pinMotorA[3] = { pinPWMA, pinAIN2, pinAIN1 };
+const int pinMotorB[3] = { pinPWMB, pinBIN1, pinBIN2 };
+
+enum moveDirection { forward, backward };
+enum turnDirection { clockwise, counterClockwise };
+
+void setup() {
+  pinMode(pinAIN2, OUTPUT);
+  pinMode(pinAIN1, OUTPUT);
+  pinMode(pinPWMA, OUTPUT);
+  pinMode(pinBIN1, OUTPUT);
+  pinMode(pinBIN2, OUTPUT);
+  pinMode(pinPWMB, OUTPUT);
+  pinMode(pinSTBY, OUTPUT);
+  pinMode(botPin1, INPUT_PULLUP);
+  pinMode(botPin2, INPUT_PULLUP);
+  pinMode(botPin3, INPUT_PULLUP);
+  pinMode(botPin4, INPUT_PULLUP);
+  pinMode(22, OUTPUT);
+  pinMode(24, OUTPUT);
+  pinMode(26, OUTPUT);
+  pinMode(28, OUTPUT);
+  pinMode(30, OUTPUT);
+  pinMode(32, OUTPUT);
+  pinMode(5,OUTPUT);
+}
+
+void loop() {
+  
+  bot3 = digitalRead(botPin3);
+  bot1 = digitalRead(botPin1);
+  bot2 = digitalRead(botPin2);
+  bot4 = digitalRead(botPin4);
+  
+  if(bot4 == LOW){
+    digitalWrite(5, HIGH);
+    }
+  else{
+    digitalWrite(5,LOW);
+  }
+  
+  if(bot3 == LOW){
+    digitalWrite(22, HIGH);
+    delay(600);
+    digitalWrite(22, LOW);
+    digitalWrite(24, HIGH);
+    delay(600);
+    digitalWrite(24, LOW);
+    digitalWrite(26, HIGH);
+    delay(600);
+    digitalWrite(26, LOW);
+    digitalWrite(28, HIGH);
+    delay(600);
+    digitalWrite(28, LOW);
+    digitalWrite(30, HIGH);
+    delay(600);
+    digitalWrite(30, LOW);
+    digitalWrite(32, HIGH);
+    delay(600);
+    digitalWrite(32, LOW);
+  }
+  else{
+    digitalWrite(22, LOW);
+    digitalWrite(24, LOW);
+    digitalWrite(26, LOW);
+    digitalWrite(28, LOW);
+    digitalWrite(30, LOW);
+    digitalWrite(32, LOW);
+  }
+  
+  enableMotors();
+  moveRobot(forward, motorSpeed);
+  delay(waitTime);
+
+  moveRobot(backward, motorSpeed);
+  delay(waitTime);
+
+  turn(clockwise, motorSpeed);
+  delay(waitTime);
+
+  turn(counterClockwise, motorSpeed);
+  delay(waitTime);
+
+  fullStop();
+  delay(waitTime);
+}
+
+// Vehículo
+void moveRobot(int direction, int spd) {
+  if (direction == forward) {
+    moveMotorForward(pinMotorA, spd);
+    moveMotorForward(pinMotorB, spd);
+  } else {
+    moveMotorBackward(pinMotorA, spd);
+    moveMotorBackward(pinMotorB, spd);
+  }
+}
+
+void turn(int direction, int spd) {
+  if (direction == clockwise) {
+    moveMotorForward(pinMotorA, spd);
+    moveMotorBackward(pinMotorB, spd);
+  } else {
+    moveMotorBackward(pinMotorA, spd);
+    moveMotorForward(pinMotorB, spd);
+  }
+}
+
+void fullStop() {
+  disableMotors();
+  stopMotor(pinMotorA);
+  stopMotor(pinMotorB);
+}
+
+// Motores
+void moveMotorForward(const int pinMotor[3], int spd) {
+  digitalWrite(pinMotor[1], HIGH);
+  digitalWrite(pinMotor[2], LOW);
+  analogWrite(pinMotor[0], spd);
+}
+
+void moveMotorBackward(const int pinMotor[3], int spd) {
+  digitalWrite(pinMotor[1], LOW);
+  digitalWrite(pinMotor[2], HIGH);
+  analogWrite(pinMotor[0], spd);
+}
+
+void stopMotor(const int pinMotor[3]) {
+  digitalWrite(pinMotor[1], LOW);
+  digitalWrite(pinMotor[2], LOW);
+  analogWrite(pinMotor[0], 0);
+}
+
+void enableMotors() {
+  digitalWrite(pinSTBY, HIGH);
+}
+
+void disableMotors() {
+  digitalWrite(pinSTBY, LOW);
+}
