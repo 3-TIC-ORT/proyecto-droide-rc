@@ -20,6 +20,11 @@ function send(c){
   postEvent("command", { cmd:c }, function(){});
 }
 
+function sendCommand(cmd) {
+  console.log("Enviando comando:", cmd);
+  postEvent("command", { cmd: cmd });
+}
+
 function clearGlow(){
   upEl.classList.remove("on");
   leftEl.classList.remove("on");
@@ -60,6 +65,16 @@ function startHorn(){
 function stopHorn(){
   if (hornTimer){ clearInterval(hornTimer); hornTimer = null; }
 }
+
+document.addEventListener("keydown", (event) => {
+  let key = event.key.toLowerCase();
+  if (key === "w") sendCommand("F");
+  if (key === "a") sendCommand("L");
+  if (key === "s") sendCommand("B");
+  if (key === "d") sendCommand("R");
+  if (key === "b") sendCommand("HORN");
+  if (key === "l") sendCommand("LED");
+});
 
 document.addEventListener("keydown", function(e){
   var k = (e.key||"").toLowerCase();
