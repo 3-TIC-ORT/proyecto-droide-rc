@@ -4,7 +4,7 @@ getEvent("ping", function (data) {
   var statusEl = document.getElementById("status");
   if (statusEl) {
     if (data && data.ok) {
-      statusEl.textContent = "Conectado al backend 👍";
+      statusEl.textContent = "Conectado al backend";
     } else {
       statusEl.textContent = "Error de ping";
     }
